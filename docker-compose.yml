@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+    code-server:
+        image: codercom/code-server
+        container_name: code-server
+        user: root
+        environment:
+            PUID: 1000
+            PGID: 1000
+            TZ: Asia/Seoul
+            PASSWORD: password
+            SUDO_PASSWORD: password
+        volumes:
+            - ./.config:/home/coder/.config
+            - ./workspace:/home/coder/project
+        restart: unless-stopped
+    nginx:
+        image: jonasal/nginx-certbot:latest
+        restart: unless-stopped
+        environment:
+            CERTBOT_EMAIL: email@email.com
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - nginx_secrets:/etc/letsencrypt
+            - ./conf.d:/etc/nginx/user_conf.d
+
+volumes:
+  nginx_secrets:
